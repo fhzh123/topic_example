@@ -11,6 +11,7 @@ from sklearn.preprocessing import normalize
 
 def preprocessing(args):
     # Data Read
+    print('Preprocessing: Data read...')
     data_daelim = pd.read_csv(os.path.join(args.korean_museum_path, '#daelim/daelim_distinct_text_cleansing.csv'))
     data_leeum = pd.read_csv(os.path.join(args.korean_museum_path, '#leeum/leeum_distinct_text_cleansing.csv'))
     data_mmcaseoul = pd.read_csv(os.path.join(args.korean_museum_path, '#mmcaseoul/mmcaseoul_distinct_text_cleansing.csv'))
@@ -26,17 +27,25 @@ def preprocessing(args):
     total_text_num = len(total_text_list)
 
     # Preprocessing
+    print('Preprocessing: Term Document Matrix setting...')
     tags = set(['Noun', 'Verb', 'Adjective'])
     stopwords_data = pd.read_csv('./Komoran_stopwords.txt', sep='\t', names=['words',  'tag', 'score'], header=None)
     stopwords = set(stopwords_data['words'])
 
+    print('Daelim start...')
     daelim_results = tdm_make(data_daelim['text'].tolist(), tags, stopwords)
+    print('Leeum start...')
     leeum_results = tdm_make(data_leeum['text'].tolist(), tags, stopwords)
+    print('MMCA start...')
     mmcaseoul_results = tdm_make(data_mmcaseoul['text'].tolist(), tags, stopwords)
+    print('Korea Museum start...')
     museumkorea_results = tdm_make(data_museumkorea['text'].tolist(), tags, stopwords)
+    print('NFM start...')
     nfmkorea_results = tdm_make(data_nfmkorea['text'].tolist(), tags, stopwords)
+    print('Total start...')
     total_results = tdm_make(total_text_list, tags, stopwords)
 
+    print('Preprocessing: Saving...')
     with open(f'./data/preprocessed.pkl', 'wb') as f:
         pickle.dump({
             'daelim': daelim_results,

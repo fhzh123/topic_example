@@ -9,6 +9,7 @@ from krwordrank.word import KRWordRank
 
 def word_cloud_gen(args):
     # Data Read
+    print('Word Cloud Generation: Data read...')
     data_daelim = pd.read_csv(os.path.join(args.korean_museum_path, '#daelim/daelim_distinct_text_cleansing.csv'))
     data_leeum = pd.read_csv(os.path.join(args.korean_museum_path, '#leeum/leeum_distinct_text_cleansing.csv'))
     data_mmcaseoul = pd.read_csv(os.path.join(args.korean_museum_path, '#mmcaseoul/mmcaseoul_distinct_text_cleansing.csv'))
@@ -16,6 +17,7 @@ def word_cloud_gen(args):
     data_nfmkorea = pd.read_csv(os.path.join(args.korean_museum_path, '#nfmkorea/nfmkorea_distinct_text_cleansing.csv'))
 
     # Wordcloud
+    print('Word Cloud Generation: Saving...')
     figure_gen('daelim')
     figure_gen('leeum')
     figure_gen('mmcaseoul')

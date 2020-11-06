@@ -1,31 +1,21 @@
 import os
-import pickle
 import argparse
-import numpy as np
-import pandas as pd
-import matplotlib.pyplot as plt
-
-from PIL import Image
-from random import shuffle
-from konlpy.tag import Mecab
-from collections import Counter
-from wordcloud import WordCloud
-from scipy.sparse import dok_matrix
-from krwordrank.word import KRWordRank
-from sklearn.decomposition import NMF
-from sklearn.preprocessing import normalize
 
 from preprocessing import preprocessing
+from topic_modeling import topic_modeling
+from word_cloud_gen import word_cloud_gen
 
 def main(args):
     if args.preprocessing:
-        print('a')
+        print('Preprocessing...')
         preprocessing(args)
     
     if args.topic_modeling:
+        print('Topic Modeling...')
         topic_modeling(args)
 
     if args.word_cloud:
+        print('Wordcloud Generation...')
         word_cloud_gen(args)
     
     else:

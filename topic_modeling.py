@@ -10,16 +10,25 @@ from sklearn.decomposition import NMF
 from sklearn.preprocessing import normalize
 
 def topic_modeling(args):
+    # Data read
+    print('Topic Modeling: Data read...')
     with open('./data/preprocessed.pkl', 'rb') as f:
         data = pickle.load(f)
     
+    print('Daelim start...')
     daelim_results = nmf_topic_modeling(data['daelim'], args.K)
+    print('Leeum start...')
     leeum_results = nmf_topic_modeling(data['leeum'], args.K)
+    print('MMCA start...')
     mmcaseoul_results = nmf_topic_modeling(data['mmcaseoul'], args.K)
+    print('Korea Museum start...')
     museumkorea_results = nmf_topic_modeling(data['museumkorea'], args.K)
+    print('NFM start...')
     mfmkorea_results = nmf_topic_modeling(data['mfmkorea'], args.K)
+    print('Total start...')
     total_results = nmf_topic_modeling(data['total'], args.K)
 
+    print('Topic Modeling: Saving...')
     with open('./data/topic_results.pkl', 'wb') as f:
         pickle.dump({
             'daelim': daelim_results,

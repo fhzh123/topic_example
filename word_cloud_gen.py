@@ -1,6 +1,9 @@
+import os
 import pickle
 import numpy as np
 import pandas as pd
+import matplotlib
+matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 
 from PIL import Image
@@ -16,40 +19,23 @@ def word_cloud_gen(args):
     data_museumkorea = pd.read_csv(os.path.join(args.korean_museum_path, '#museumkorea/museumkorea_distinct_text_cleansing.csv'))
     data_nfmkorea = pd.read_csv(os.path.join(args.korean_museum_path, '#nfmkorea/nfmkorea_distinct_text_cleansing.csv'))
 
+    # Total Data
+    total_text_list = data_daelim['text'].tolist()
+    total_text_list.extend(data_leeum['text'].tolist())
+    total_text_list.extend(data_mmcaseoul['text'].tolist())
+    total_text_list.extend(data_museumkorea['text'].tolist())
+    total_text_list.extend(data_nfmkorea['text'].tolist())
+
     # Wordcloud
     print('Word Cloud Generation: Saving...')
-    figure_gen('daelim')
-    figure_gen('leeum')
-    figure_gen('mmcaseoul')
-    figure_gen('museumkorea')
-    figure_gen('nfmkorea')
-    figure_gen('total')
+    figure_gen(data_daelim['text'].tolist(), np.array(Image.open('./data/Daelim.jpg')), 'daelim', args)
+    figure_gen(data_leeum['text'].tolist(), np.array(Image.open('./data/Leeum.jpg')), 'leeum', args)
+    figure_gen(data_mmcaseoul['text'].tolist(), np.array(Image.open('./data/mmca.jpg')), 'mmcaseoul', args)
+    figure_gen(data_museumkorea['text'].tolist(), np.array(Image.open('./data/museumkorea.jpg')), 'museumkorea', args)
+    figure_gen(data_nfmkorea['text'].tolist(), np.array(Image.open('./data/NFM.jpg')), 'nfmkorea', args)
+    figure_gen(total_text_list, np.array(Image.open('./data/korea.jpg')), 'total', args)
 
-def figure_gen(museum):
-    if museum  == 'daelim':
-        dat_ = data_daelim['text']
-        mask = np.array(Image.open('./data/Daelim.jpg'))
-    elif museum  == 'leeum':
-        dat_ = data_leeum['text']
-        mask = np.array(Image.open('./data/Leeum.jpg'))
-    elif museum  == 'mmcaseoul':
-        dat_ = data_mmcaseoul['text']
-        mask = np.array(Image.open('./data/mmca.jpg'))
-    elif museum  == 'museumkorea':
-        dat_ = data_museumkorea['text']
-        mask = np.array(Image.open('./data/museumkorea.jpg'))
-    elif museum  == 'nfmkorea':
-        dat_ = data_nfmkorea['text']
-        mask = np.array(Image.open('./data/NFM.jpg'))
-    elif museum == 'total':
-        dat_ = data_daelim['text'].tolist()
-        dat_.extend(data_leeum['text'].tolist())
-        dat_.extend(data_mmcaseoul['text'].tolist())
-        dat_.extend(data_museumkorea['text'].tolist())
-        dat_.extend(data_nfmkorea['text'].tolist())
-        dat_ = pd.DataFrame({'text': dat_})['text']
-        mask = np.array(Image.open('./data/korea.jpg'))
-
+def figure_gen(dat_, mask, save_name, args):
     wordrank_extractor = KRWordRank(
         min_count = 5,
         max_length = 10,
@@ -57,18 +43,18 @@ def figure_gen(museum):
         )
 
     beta = 0.85
-    max_iter = 15
+    max_iter = 10
 
-    keywords, rank, graph = wordrank_extractor.extract(dat_.tolist(), beta, max_iter)
+    keywords, rank, graph = wordrank_extractor.extract(dat_, beta, max_iter)
 
     keyword_dict = dict()
 
-    for word, r in sorted(keywords.items(), key=lambda x:x[1], reverse=True)[:300]:
+    for word, r in sorted(keywords.items(), key=lambda x:x[1], reverse=True)[:args.word_cloud_words]:
         # print('%8s:\t%.4f' % (word, r))
         keyword_dict[word] = r
 
     wordcloud = WordCloud(
-        font_path = font_path,
+        font_path = args.font_path,
         mask=mask,
         width = 800,
         height = 800,
@@ -79,4 +65,5 @@ def figure_gen(museum):
     plt.figure(figsize=(10, 10))
     plt.imshow(wordcloud, interpolation="bilinear")
     plt.axis("off")
-    plt.savefig(f'./data/results_{museum}.png', dpi=300)
+    plt.savefig(f'./data/results_{save_name}.png', dpi=300)
+    plt.show()

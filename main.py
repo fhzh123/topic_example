@@ -29,5 +29,6 @@ if __name__=='__main__':
     parser.add_argument('--korean_museum_path', default='./data/GCPKoreanMuseumData', type=str)
     parser.add_argument('--font_path', default='/usr/share/fonts/truetype/nanum/NanumGothic.ttf', type=str)
     parser.add_argument('--K', default=10, type=int)
+    parser.add_argument('--word_cloud_words', default=300, type=int)
     args = parser.parse_args()
     main(args)

@@ -1,19 +1,22 @@
+import os
 import pickle
 import numpy as np
 import pandas as pd
 
-from random import shuffle
-from konlpy.tag import Mecab
-from collections import Counter
-from scipy.sparse import dok_matrix
 from sklearn.decomposition import NMF
-from sklearn.preprocessing import normalize
 
 def topic_modeling(args):
     # Data read
     print('Topic Modeling: Data read...')
     with open('./data/preprocessed.pkl', 'rb') as f:
         data = pickle.load(f)
+
+    # Total Data
+    total_text_list = data_daelim['text'].tolist()
+    total_text_list.extend(data_leeum['text'].tolist())
+    total_text_list.extend(data_mmcaseoul['text'].tolist())
+    total_text_list.extend(data_museumkorea['text'].tolist())
+    total_text_list.extend(data_nfmkorea['text'].tolist())
     
     print('Daelim start...')
     daelim_results = nmf_topic_modeling(data['daelim'], args.K)
@@ -24,7 +27,7 @@ def topic_modeling(args):
     print('Korea Museum start...')
     museumkorea_results = nmf_topic_modeling(data['museumkorea'], args.K)
     print('NFM start...')
-    mfmkorea_results = nmf_topic_modeling(data['mfmkorea'], args.K)
+    nfmkorea_results = nmf_topic_modeling(data['mfmkorea'], args.K)
     print('Total start...')
     total_results = nmf_topic_modeling(data['total'], args.K)
 
@@ -37,7 +40,7 @@ def topic_modeling(args):
             'museumkorea': museumkorea_results,
             'mfmkorea': nfmkorea_results,
             'total': total_results
-        })
+        }, f)
 
 def nmf_topic_modeling(dat_, K):
     topic_list = list()

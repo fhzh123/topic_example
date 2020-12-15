@@ -3,20 +3,13 @@ import pickle
 import numpy as np
 import pandas as pd
 
-from sklearn.decomposition import NMF
+from sklearn.decomposition import NMF, LatentDirichletAllocation
 
 def topic_modeling(args):
     # Data read
     print('Topic Modeling: Data read...')
     with open('./data/preprocessed.pkl', 'rb') as f:
         data = pickle.load(f)
-
-    # Total Data
-    total_text_list = data_daelim['text'].tolist()
-    total_text_list.extend(data_leeum['text'].tolist())
-    total_text_list.extend(data_mmcaseoul['text'].tolist())
-    total_text_list.extend(data_museumkorea['text'].tolist())
-    total_text_list.extend(data_nfmkorea['text'].tolist())
     
     print('Daelim start...')
     daelim_results = nmf_topic_modeling(data['daelim'], args.K)
@@ -44,7 +37,7 @@ def topic_modeling(args):
 
 def nmf_topic_modeling(dat_, K):
     topic_list = list()
-    nmf = NMF(n_components=K, max_iter=1000, alpha=0.1)
+    nmf = LatentDirichletAllocation(n_components=K, max_iter=1000)
     W = nmf.fit_transform(dat_['tdm'])
     H = nmf.components_
 
